@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: #1c1b2f; /* Deep royal background */
+      color: white;
+    }
+
+    .form-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-right: 3%;
+    }
+
+    .form-box {
+      background: rgba(25, 25, 50, 0.7);
+      padding: 2rem;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #c9a0dc; /* Light royal purple */
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.7rem;
+      background: #4169e1; /* Royal blue */
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #3b4cca;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 1rem;
+      color: #daa520; /* goldenrod */
+    }
+
+    .wave-section {
+      flex: 0 0 45%;
+      background: linear-gradient(135deg,
+        #c9a0dc 0%,
+        #6495ed 20%,
+        #3cb371 40%,
+        #d2691e 60%,
+        #ff6347 80%,
+        #f0e68c 100%);
+      clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 80%, 15% 50%, 0% 20%, 0% 0%);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .wave-section {
+        display: none;
+      }
+
+      .form-container {
+        width: 100%;
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-box">
+      <h2>Sign Up</h2>
+      <form action="/user/signup" method="POST">
+        <label for="name">Name</label>
+        <input type="text" name="name" id="name" placeholder="Your full name" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" placeholder="example@mail.com" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" placeholder="Create a password" required>
+
+        <button type="submit">Create Account</button>
+      </form>
+      <div class="footer">Already have an account? <a href="/login" style="color: #87ceeb; text-decoration: underline;">Login</a></div>
+    </div>
+  </div>
+  <div class="wave-section"></div>
+</body>
+</html>
