@@ -71,7 +71,7 @@ export async function handelUserLogin(req, res) {
     console.log(sessionId)
     setUser(sessionId, user);
     res.cookie("uid", sessionId);
-    res.redirect("/");
+    res.redirect("/home");
   } catch (err) {
     console.error("Login error:", err.message);
     res.status(500).send("Internal Server Error");

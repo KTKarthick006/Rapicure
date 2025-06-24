@@ -17,10 +17,10 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log(" Connected to MongoDB");
+    console.log("Connected to MongoDB");
   })
   .catch((err) => {
-    console.error(" MongoDB connection error:", err);
+    console.error("MongoDB connection error:", err);
   });
 
 // Create Express app
@@ -38,8 +38,12 @@ app.use(express.static(path.join(__dirname, "front")));
 app.use("/user", userRouter);
 
 // Protected Home Route
-app.get("/", restrictToLoggedinUserOnly, (req, res) => {
+app.get("/", (req, res) => {
   res.send(`Hello, ${req.user.name}`);
+});
+
+app.get("/home", restrictToLoggedinUserOnly, (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/home.html"));
 });
 
 // Auth-related HTML pages
@@ -49,6 +53,14 @@ app.get("/signup", (req, res) => {
 
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/login.html"));
+});
+
+app.get("/upload", restrictToLoggedinUserOnly, (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/upload.html"));
+});
+
+app.get("/my-prescriptions", restrictToLoggedinUserOnly, (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/my-prescriptions.html"));
 });
 
 // Logout Route
@@ -64,5 +76,5 @@ app.use((req, res) => {
 
 // Start server
 app.listen(3000, () => {
-  console.log("✅ Server running at http://localhost:3000");
+  console.log("Server running at http://localhost:3000");
 });
