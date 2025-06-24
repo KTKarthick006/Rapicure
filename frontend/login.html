@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +16,7 @@
     body {
       display: flex;
       height: 100vh;
-      background: #1c1b2f; /* Deep royal background */
+      background: #1c1b2f;
       color: white;
     }
 
@@ -39,7 +40,7 @@
     h2 {
       text-align: center;
       margin-bottom: 1.5rem;
-      color: #c9a0dc; /* Light royal purple */
+      color: #c9a0dc;
     }
 
     label {
@@ -67,33 +68,35 @@
     button {
       width: 100%;
       padding: 0.7rem;
-      background: #4169e1; /* Royal blue */
+      background: #4169e1;
       border: none;
       border-radius: 8px;
       color: white;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.6s;
     }
 
     button:hover {
-      background: #3b4cca;
+      background: #001cf4;
+      border-radius: 18px;
     }
 
     .footer {
       text-align: center;
       margin-top: 1rem;
-      color: #daa520; /* goldenrod */
+      color: #daa520;
     }
 
     .wave-section {
       flex: 0 0 45%;
       background: linear-gradient(135deg,
-        #c9a0dc 0%,
-        #6495ed 20%,
-        #3cb371 40%,
-        #d2691e 60%,
-        #ff6347 80%,
-        #f0e68c 100%);
+          #c9a0dc 0%,
+          #6495ed 20%,
+          #3cb371 40%,
+          #d2691e 60%,
+          #ff6347 80%,
+          #f0e68c 100%);
       clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 80%, 15% 50%, 0% 20%, 0% 0%);
     }
 
@@ -111,24 +114,46 @@
         padding: 2rem;
       }
     }
+
+    #inputEmail,
+    #inputPass {
+      transition: 0.4s ease;
+    }
+
+    #inputEmail:hover,
+    #inputPass:hover {
+      transition: 0.4s;
+      transform: scale(1.05);
+    }
+
+    input:focus {
+      outline: none;
+    }
   </style>
 </head>
+
 <body>
   <div class="form-container">
     <div class="form-box">
       <h2>Login</h2>
       <form action="/user/login" method="POST">
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" placeholder="your email id" required>
+        <div id="inputEmail">
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email" placeholder="Your Email Id" required>
+        </div>
 
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" placeholder="enter password" required>
+        <div id="inputPass">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" placeholder="Enter Your Password" required>
+        </div>
 
         <button type="submit">Submit</button>
       </form>
-      <div class="footer">Don't have an account? <a href="/signup" style="color: #87ceeb; text-decoration: underline;">Signup</a></div>
+      <div class="footer">Don't have an account? <a href="/signup"
+          style="color: #87ceeb; text-decoration: none;">Signup</a></div>
     </div>
   </div>
   <div class="wave-section"></div>
 </body>
+
 </html>
