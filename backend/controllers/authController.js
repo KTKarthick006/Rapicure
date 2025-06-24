@@ -44,7 +44,7 @@ export async function handelUserSignup (req, res) {
       </head>
       <body>
         <div class="message-box">
-          <h2>✅ Signup Successful</h2>
+          <h2> Signup Successful</h2>
           <p>You will be redirected to the login page shortly...</p>
         </div>
       </body>
