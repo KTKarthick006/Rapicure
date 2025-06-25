@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Prescription from "../models/Prescription.js";
-import extractMeds from "../utils/extractMeds.js"; // make sure this is correctly imported
+import extractMeds from "../utils/extractMeds.js";
 
 export async function handlePdfUpload(req, res) {
   try {
@@ -90,7 +90,7 @@ export async function handlePdfUpload(req, res) {
               </html>
             `);
           });
-      }, 300); // Wait 300ms for GridFS to flush
+      }, 300); 
     });
 
   } catch (err) {

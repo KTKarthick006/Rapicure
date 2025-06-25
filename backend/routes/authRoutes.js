@@ -15,35 +15,34 @@ import { handlePdfUpload } from "../controllers/ocrController.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-//  Create a single router
 const router = express.Router();
 
 //  API routes
 router.post("/signup", handelUserSignup);
 router.post("/login", handelUserLogin);
-router.post(
-  "/upload", restrictToLoggedinUserOnly, upload.single("pdf"), handlePdfUpload
-);
+router.post("/upload", restrictToLoggedinUserOnly, upload.single("pdf"), handlePdfUpload);
 
 router.get("/", (req, res) => {
   res.send("User GET working!");
 });
 
-// Serve signup form
+// Signup form caller
 router.get("/signup", (req, res) => {
   res.sendFile(path.join(__dirname, "../front/signup.html"));
 });
 
-// Serve login form (optional, if you need it here too)
+// Login form caller
 router.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "../front/login.html"));
 });
 
+// To se the prescriptions uploaded
 router.get("/my-prescriptions/json", restrictToLoggedinUserOnly, async (req, res) => {
   const prescriptions = await Prescription.find({ createdBy: req.user._id });
   res.json(prescriptions);
 });
 
+// To show the files in the prescription page
 router.get("/view/:filename", restrictToLoggedinUserOnly, async (req, res) => {
   try {
     const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
