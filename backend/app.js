@@ -1,3 +1,4 @@
+// app.js
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -6,15 +7,20 @@ import cookieParser from "cookie-parser";
 import { restrictToLoggedinUserOnly } from "./middleware/isAuthenticated.js";
 import userRouter from "./routes/authRoutes.js";
 
-//  Setup for __dirname in ES Modules
+// OCR dependencies
+import { PDFDocument } from "pdf-lib";
+import { createCanvas } from "canvas";
+import { createWorker } from "tesseract.js";
+
+// Setup for __dirname in ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-//  Connect to MongoDB
+// Connect to MongoDB
 mongoose
   .connect("mongodb://localhost:27017/sarthakdbs", {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useUnifiedTopology: true
   })
   .then(() => {
     console.log("Connected to MongoDB");
@@ -39,7 +45,7 @@ app.use("/user", userRouter);
 
 // Protected Home Route
 app.get("/", (req, res) => {
-  res.send(`Hello, ${req.user.name}`);
+  res.send(`Hello, ${req.user?.name || "User"}`);
 });
 
 app.get("/home", restrictToLoggedinUserOnly, (req, res) => {
@@ -78,3 +84,41 @@ app.use((req, res) => {
 app.listen(3000, () => {
   console.log("Server running at http://localhost:3000");
 });
+
+// OCR Function
+export async function extractMeds(pdfBuffer) {
+  const pdfDoc = await PDFDocument.load(pdfBuffer);
+  const numPages = pdfDoc.getPageCount();
+
+  const worker = await createWorker("eng", 1);
+  await worker.loadLanguage("eng");
+  await worker.initialize("eng");
+
+  let extractedText = "";
+
+  for (let i = 0; i < numPages; i++) {
+    const page = pdfDoc.getPage(i);
+    const { width, height } = page.getSize();
+
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = "black";
+    ctx.font = "16px Arial";
+    ctx.fillText("OCR cannot see real PDF text from here", 50, 100);
+
+    const buffer = canvas.toBuffer("image/png");
+
+    const {
+      data: { text }
+    } = await worker.recognize(buffer);
+
+    extractedText += `Page ${i + 1}\n${text}\n\n`;
+  }
+
+  await worker.terminate();
+  return extractedText.trim();
+}

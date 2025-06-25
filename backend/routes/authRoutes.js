@@ -7,7 +7,7 @@ import {
   handelUserLogin,
 } from "../controllers/authController.js";
 import { restrictToLoggedinUserOnly } from "../middleware/isAuthenticated.js";
-import upload from "../utils/extractMeds.js";
+import upload from "../utils/pdfUpload.js";
 import Prescription from "../models/Prescription.js";
 import { handlePdfUpload } from "../controllers/ocrController.js";
 
