@@ -3,20 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <title>Home - Health Assistant</title>
+  <style>
+    * {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #2b6280;
+    }
+    .heading {
+      margin-top: 150px;
+      text-align: center;
+      color:wheat;
+    }
+    .btns {
+      text-align: center;
+      background-color: #686ea0;
+      padding: 10px;
+      border: black solid 2px;
+      border-radius: 10px;
+      box-shadow: 0px 3px 8px black;
+      transition: 0.5s;
+      margin: 14px;
+      font-size: 23px;
+    }
+    .btns:hover {
+      box-shadow: 0px 6px 20px black;
+      transform: scale(1.03);
+      background-color: #686ea0bc;
+      
+    }
+    .nessBtns {
+      text-align: center;
+    }
+    #logoutBtn {
+      text-align: right;
+      font-size: 16px;
+    }
+    .lgbtns {
+      background-color: #616d70;
+      border: black solid 2px;
+      border-radius: 13px;
+      padding: 10px 20px 12px 20px;
+      transition: 0.4s;
+      box-shadow: 0px 3px 8px black;
+    }
+    .lgbtns:hover {
+      background-color: rgb(174, 37, 3);
+      box-shadow: 0px 6px 20px black;
+
+    }
+  </style>
 </head>
 <body>
-  <h2>Welcome to Your Dashboard</h2>
+  <div id="logoutBtn">
+    <button onclick="window.location.href='/logout'" class="lgbtns">
+      Logout
+    </button>
+  </div>
+  <div class="heading">
+    <h1>Welcome to Dashboard</h1>
+  </div>
 
-  <button onclick="window.location.href='/upload'">
-    Upload Prescription
-  </button>
-
-  <button onclick="window.location.href='/my-prescriptions'">
-    View My Prescriptions
-  </button>
-
-  <button onclick="window.location.href='/logout'">
-    Logout
-  </button>
+  <div class="nessBtns">
+    <button onclick="window.location.href='/upload'" class="btns">
+      Upload Prescription
+    </button>
+  
+    <button onclick="window.location.href='/my-prescriptions'" class="btns">
+      View My Prescription(s)
+    </button>
+  
+  </div>
 </body>
 </html>
