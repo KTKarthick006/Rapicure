@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Prescription from "../models/Prescription.js";
 import extractMeds from "../utils/extractMeds.js";
+import getHealthAdvice from "../utils/fdaApi.js";
 
 export async function handlePdfUpload(req, res) {
   try {
@@ -42,9 +43,16 @@ export async function handlePdfUpload(req, res) {
           .on("end", async () => {
             const buffer = Buffer.concat(chunks);
             const extractedText = await extractMeds(buffer);
+            let healthAdvice = "";
+            try {
+              healthAdvice = await getHealthAdvice(extractedText);
+            } catch (e) {
+              console.warn("AI suggestion error")
+            }
 
             await Prescription.findByIdAndUpdate(prescription._id, {
               extractedText,
+              healthAdvice
             });
 
             res.send(`

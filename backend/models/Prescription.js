@@ -8,7 +8,14 @@ const prescriptionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
     },
-    extractedText: String, 
+    extractedText: {
+      type: String,
+      default: ""
+    }, 
+    healthAdvice: {
+      type: String,
+      default: ""
+    }
   },
   { timestamps: true }
 );
