@@ -1,4 +1,3 @@
-// controllers/chatController.js
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Chat from "../models/chat.js";
 
