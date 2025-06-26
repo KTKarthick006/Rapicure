@@ -74,5 +74,28 @@
     </button>
   
   </div>
+
+  <div id="chat-box"></div>
+<input id="chat-input" placeholder="Type something...">
+<button onclick="sendMessage()">Send</button>
+
+<script>
+  async function sendMessage() {
+    const msg = document.getElementById("chat-input").value;
+    const chatBox = document.getElementById("chat-box");
+
+    chatBox.innerHTML += `<p><strong>You:</strong> ${msg}</p>`;
+
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg }),
+    });
+
+    const data = await res.json();
+    chatBox.innerHTML += `<p><strong>Healo:</strong> ${data.reply}</p>`;
+  }
+</script>
+
 </body>
 </html>

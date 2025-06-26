@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import { restrictToLoggedinUserOnly } from "./middleware/isAuthenticated.js";
 import userRouter from "./routes/authRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 // OCR dependencies
 import { PDFDocument } from "pdf-lib";
@@ -36,6 +37,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use("/api", chatRoutes);
 
 // Serve static files from /front
 app.use(express.static(path.join(__dirname, "front")));
