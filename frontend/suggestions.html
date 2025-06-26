@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Healthcare AI Suggestions</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900">
+  <div class="max-w-3xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold mb-6 text-center">Personalized Health Guidance</h1>
+
+    <div id="suggestions" class="space-y-6">
+      <!-- Suggestions will be loaded here from the database -->
+    </div>
+  </div>
+
+  <script>
+    async function loadSuggestions() {
+      try {
+        const response = await fetch('/api/suggestions'); // Replace with your actual API endpoint
+        if (!response.ok) throw new Error('Failed to fetch suggestions');
+        const data = await response.json();
+
+        const suggestionsContainer = document.getElementById("suggestions");
+        suggestionsContainer.innerHTML = '';
+
+        Object.entries(data).forEach(([section, advice]) => {
+          const sectionEl = document.createElement("div");
+          sectionEl.className = "bg-white p-5 rounded-xl shadow";
+          sectionEl.innerHTML = `
+            <h2 class="text-xl font-semibold mb-2">${section}</h2>
+            <p>${advice}</p>
+          `;
+          suggestionsContainer.appendChild(sectionEl);
+        });
+      } catch (error) {
+        console.error(error);
+        document.getElementById("suggestions").innerHTML = '<p class="text-red-600">Failed to load suggestions.</p>';
+      }
+    }
+
+    window.onload = loadSuggestions;
+  </script>
+</body>
+</html>

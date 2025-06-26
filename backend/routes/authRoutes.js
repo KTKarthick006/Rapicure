@@ -58,4 +58,27 @@ router.get("/view/:filename", restrictToLoggedinUserOnly, async (req, res) => {
   }
 });
 
+router.get('/api/suggestions', restrictToLoggedinUserOnly, async (req, res) => {
+  try {
+    const prescription = await Prescription.findOne({ createdBy: req.user._id })
+      .sort({ createdAt: -1 });
+
+    if (!prescription || !prescription.healthAdvice) {
+      return res.status(404).json({ error: 'No health advice found.' });
+    }
+
+    let parsedAdvice;
+    try {
+      parsedAdvice = JSON.parse(prescription.healthAdvice);
+    } catch (e) {
+      parsedAdvice = { 'General Advice': prescription.healthAdvice };
+    }
+
+    return res.json(parsedAdvice);
+  } catch (err) {
+    console.error('Error in /api/suggestions:', err);
+    return res.status(500).json({ error: 'Server error fetching suggestions.' });
+  }
+});
+
 export default router;
