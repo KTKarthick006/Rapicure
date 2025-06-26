@@ -1,34 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Prescriptions</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: #b7c2ba;
+      color: white;
+      flex-direction: row;
+    }
+
+    .content-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    h2 {
+      color: #8c5717;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    h4 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #1e2d2f;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    iframe {
+      display: block;
+      margin: 0 auto 2rem auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgb(0, 0, 0);
+      transition: box-shadow 0.3s ease;
+    }
+
+    iframe:hover {
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .wave-section {
+      flex: 0 0 45%;
+      background-image: url("https://img.freepik.com/free-vector/clean-medical-background_53876-116873.jpg?semt=ais_items_boosted&w=740");
+      clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 80%, 15% 50%, 0% 20%, 0% 0%);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .wave-section {
+        display: none;
+      }
+
+      .content-container {
+        width: 100%;
+        padding: 1rem;
+      }
+
+      iframe {
+        width: 100% !important;
+        height: 300px !important;
+      }
+    }
+
+    a.back-btn {
+      margin-top: 2rem;
+      color: #00673f;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    a.back-btn:hover {
+      color: #004c2c;
+    }
+  </style>
 </head>
+
 <body>
-  <h2>Your Uploaded Prescriptions</h2>
-  <div id="prescription-list"></div>
+  <div class="content-container">
+    <h2>Your Uploaded Prescriptions</h2>
+    <div id="prescription-list"></div>
+    <a href="/home" class="back-btn">← Back to Dashboard</a>
+  </div>
+
+  <div class="wave-section"></div>
 
   <script>
     async function loadPrescriptions() {
-      const res = await fetch("/user/my-prescriptions/json");
-      const prescriptions = await res.json();
+      try {
+        const res = await fetch("/user/my-prescriptions/json");
+        const prescriptions = await res.json();
 
-      const list = document.getElementById("prescription-list");
-      prescriptions.forEach(p => {
-        const title = document.createElement("h4");
-        title.innerText = `${p.filename}`;
+        const list = document.getElementById("prescription-list");
 
-        const iframe = document.createElement("iframe");
-        iframe.src = `/user/view/${p.filename}`;
-        iframe.width = "600";
-        iframe.height = "400";
-        iframe.style.marginBottom = "30px";
+        if (prescriptions.length === 0) {
+          const noData = document.createElement("p");
+          noData.innerText = "No prescriptions uploaded yet.";
+          noData.style.color = "#2c2c2c";
+          noData.style.marginTop = "2rem";
+          list.appendChild(noData);
+        } else {
+          prescriptions.forEach(p => {
+            const title = document.createElement("h4");
+            title.innerText = `${p.filename}`;
 
-        list.appendChild(title);
-        list.appendChild(iframe);
-      });
+            const iframe = document.createElement("iframe");
+            iframe.src = `/user/view/${p.filename}`;
+            iframe.width = "600";
+            iframe.height = "400";
+
+            list.appendChild(title);
+            list.appendChild(iframe);
+          });
+        }
+      } catch (err) {
+        console.error("Error loading prescriptions:", err);
+      }
     }
 
     loadPrescriptions();
   </script>
 </body>
+
 </html>
