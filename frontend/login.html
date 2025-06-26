@@ -29,7 +29,7 @@
     }
 
     .form-box {
-      background: #929487c3;
+      background: #c5dad0;
       padding: 2rem;
       border-radius: 20px;
       width: 90%;
@@ -40,7 +40,6 @@
 
     .form-box:hover {
       box-shadow: 0 8px 30px rgb(0, 0, 0);
-
     }
 
     h2 {
@@ -70,7 +69,7 @@
     }
 
     input::placeholder {
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(255, 255, 255, 0.862);
       /* Make placeholder slightly transparent white */
     }
 
@@ -99,8 +98,14 @@
 
     .wave-section {
       flex: 0 0 45%;
-      background-image: url("Images/clean-medical-background_53876-116873.avif");
+      background-image: url("https://img.freepik.com/free-vector/clean-medical-background_53876-116873.jpg?semt=ais_items_boosted&w=740");
       clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 80%, 15% 50%, 0% 20%, 0% 0%);
+    }
+    .supbtn:hover {
+      transition: transform 0.3s ease;
+      display: inline-block;
+      text-shadow: 0 0 3px #66df4b, 0 0 5px #00ffae;
+      transform: scale(1.09) ;
     }
 
     @media (max-width: 868px) {
@@ -121,6 +126,7 @@
     #inputEmail,
     #inputPass {
       transition: 0.4s ease;
+      color: #7a5800;
     }
 
     #inputEmail:hover,
@@ -153,7 +159,7 @@
         <button type="submit">Submit</button>
       </form>
       <div class="footer">Don't have an account? <a href="/signup"
-          style="color: #00673f; text-decoration: none;">Signup</a></div>
+          style="color: #00673f; text-decoration: none;"> <span class="supbtn">Signup</span></a></div>
     </div>
   </div>
   <div class="wave-section"></div>
