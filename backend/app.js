@@ -2,7 +2,6 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import { restrictToLoggedinUserOnly } from "./middleware/isAuthenticated.js";
 import userRouter from "./routes/authRoutes.js";
@@ -18,18 +17,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Connect to MongoDB
-mongoose
-  .connect("mongodb://localhost:27017/sarthakdbs", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-  });
-
+connectDb();
 // Create Express app
 const app = express();
 
@@ -115,7 +103,7 @@ export async function extractMeds(pdfBuffer) {
     const buffer = canvas.toBuffer("image/png");
 
     const {
-      data: { text }
+      data: { text },
     } = await worker.recognize(buffer);
 
     extractedText += `Page ${i + 1}\n${text}\n\n`;
