@@ -138,6 +138,8 @@
       padding: 1rem 2rem;
       display: flex;
       flex-direction: column;
+      scroll-behavior: smooth;
+      padding-bottom: 120px;
     }
 
     .message {
@@ -212,6 +214,34 @@
       background-color: var(--accent-color);
       border-radius: 4px;
     }
+
+    .chat-list-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .chat-list-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 4px;
+  }
+
+  /* Matching custom scrollbar for chat messages */
+  .messages::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .messages::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 4px;
+  }
+
+  .messages::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .messages {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) transparent;
+  }
   </style>
 </head>
 <body>
