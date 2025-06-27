@@ -2,10 +2,9 @@ import { v4 as uuidv4 } from "uuid";
 import User from "../models/User.js";
 import { setUser } from "./auth.js";
 
-export async function handelUserSignup (req, res) {
-    try {
+export async function handelUserSignup(req, res) {
+  try {
     const { name, email, password } = req.body;
-
     await User.create({ name, email, password });
 
     res.send(`
@@ -52,8 +51,8 @@ export async function handelUserSignup (req, res) {
     `);
 
   } catch (err) {
-    console.error("Signup error:", err.message);
-    res.status(500).send("Internal Server Error");
+    console.error(err);
+    res.status(500).send("Signup failed");
   }
 }
 
@@ -61,19 +60,13 @@ export async function handelUserLogin(req, res) {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email, password });
-    if (!user) {
-      return res.render("login", {
-        error: "Invalid credentials",
-      });
-    }
-
+    if (!user) return res.status(401).send("Invalid credentials");
     const sessionId = uuidv4();
-    console.log(sessionId)
     setUser(sessionId, user);
-    res.cookie("uid", sessionId);
-    res.redirect("/home");
+    res.cookie('uid', sessionId, { httpOnly: true });
+    res.redirect('/home');
   } catch (err) {
-    console.error("Login error:", err.message);
-    res.status(500).send("Internal Server Error");
+    console.error(err);
+    res.status(500).send("Login failed");
   }
 }

@@ -2,60 +2,76 @@ import express from "express";
 import mongoose from "mongoose";
 import path from "path";
 import { fileURLToPath } from "url";
+import multer from "multer";
+import Prescription from "../models/Prescription.js";
 import {
   handelUserSignup,
   handelUserLogin,
 } from "../controllers/authController.js";
 import { restrictToLoggedinUserOnly } from "../middleware/isAuthenticated.js";
-import upload from "../utils/pdfUpload.js";
-import Prescription from "../models/Prescription.js";
 import { handlePdfUpload } from "../controllers/ocrController.js";
-
-//  Path setup for sendFile
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { getHealthAdviceByFilename } from "../controllers/getHealthAdviceByFilename.js";
 
 const router = express.Router();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const upload = multer({ storage: multer.memoryStorage() });
 
-//  API routes
+// Public routes
+router.get("/signup", (req, res) =>
+  res.sendFile(path.join(__dirname, "../frontend/signup.html"))
+);
 router.post("/signup", handelUserSignup);
+
+router.get("/login", (req, res) =>
+  res.sendFile(path.join(__dirname, "../frontend/login.html"))
+);
 router.post("/login", handelUserLogin);
-router.post("/upload", restrictToLoggedinUserOnly, upload.single("pdf"), handlePdfUpload);
 
-router.get("/", (req, res) => {
-  res.send("User GET working!");
+// Protect below routes
+router.use(restrictToLoggedinUserOnly);
+
+// Dashboard & views
+router.get("/home", (req, res) =>
+  res.sendFile(path.join(__dirname, "../frontend/home.html"))
+);
+router.get("/upload", (req, res) =>
+  res.sendFile(path.join(__dirname, "../frontend/upload.html"))
+);
+router.post("/upload", upload.single("pdf"), handlePdfUpload);
+router.get("/my-prescriptions", (req, res) =>
+  res.sendFile(path.join(__dirname, "../frontend/my-prescriptions.html"))
+);
+
+// API endpoints
+router.get("/my-prescriptions/json", async (req, res) => {
+  try {
+    const list = await Prescription.find({ createdBy: req.user._id });
+    res.json(list);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch prescriptions" });
+  }
 });
 
-// Signup form caller
-router.get("/signup", (req, res) => {
-  res.sendFile(path.join(__dirname, "../front/signup.html"));
-});
+router.get("/suggestions", getHealthAdviceByFilename);
 
-// Login form caller
-router.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "../front/login.html"));
-});
-
-// To se the prescriptions uploaded
-router.get("/my-prescriptions/json", restrictToLoggedinUserOnly, async (req, res) => {
-  const prescriptions = await Prescription.find({ createdBy: req.user._id });
-  res.json(prescriptions);
-});
-
-// To show the files in the prescription page
-router.get("/view/:filename", restrictToLoggedinUserOnly, async (req, res) => {
+// Download PDF by filename
+router.get("/view/:filename", async (req, res) => {
   try {
     const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-      bucketName: "prescriptions"
+      bucketName: "prescriptions",
     });
-
     const stream = bucket.openDownloadStreamByName(req.params.filename);
     res.set("Content-Type", "application/pdf");
     stream.pipe(res);
+    stream.on("error", () => res.status(404).send("PDF not found"));
   } catch (err) {
-    console.error("PDF view error:", err.message);
-    res.status(404).send("PDF not found");
+    console.error(err);
+    res.status(500).send("Error streaming PDF");
   }
 });
+
+// Health advice endpoint
+router.get("/healthadvice/:filename", getHealthAdviceByFilename);
 
 export default router;

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Prescription from "../models/Prescription.js";
 import extractMeds from "../utils/extractMeds.js";
 import getHealthAdvice from "../utils/fdaApi.js";
+import Chat from "../models/chat.js";
 
 export async function handlePdfUpload(req, res) {
   try {
@@ -31,7 +32,6 @@ export async function handlePdfUpload(req, res) {
         createdBy: req.user._id,
       });
 
-      // Wait a moment before reading
       setTimeout(() => {
         const chunks = [];
         bucket.openDownloadStream(uploadStream.id)
@@ -44,15 +44,26 @@ export async function handlePdfUpload(req, res) {
             const buffer = Buffer.concat(chunks);
             const extractedText = await extractMeds(buffer);
             let healthAdvice = "";
+
             try {
               healthAdvice = await getHealthAdvice(extractedText);
             } catch (e) {
-              console.warn("AI suggestion error")
+              console.warn("AI suggestion error");
             }
 
             await Prescription.findByIdAndUpdate(prescription._id, {
               extractedText,
               healthAdvice
+            });
+
+            await Chat.create({
+              createdBy: req.user._id,
+              messages: [
+                {
+                  role: "bot",
+                  text: `Here are suggestions based on your uploaded prescription (${prescription.filename}):\n\n${healthAdvice}`
+                }
+              ]
             });
 
             res.send(`
@@ -98,9 +109,8 @@ export async function handlePdfUpload(req, res) {
               </html>
             `);
           });
-      }, 300); 
+      }, 300);
     });
-
   } catch (err) {
     console.error("Upload fail:", err.message);
     res.status(500).send("Internal Server Error");
