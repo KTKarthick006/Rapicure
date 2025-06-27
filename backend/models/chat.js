@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema({
-  role: { type: String, enum: ["user", "bot"], required: true },
+  role: { type: String, enum: ["user", "bot", "system"], required: true },
   text: { type: String, required: true },
   timestamp: { type: Date, default: Date.now }
 });

@@ -56,14 +56,24 @@ export async function handlePdfUpload(req, res) {
               healthAdvice
             });
 
+            const allAdviceDocs = await Prescription.find({
+              createdBy: req.user._id,
+              healthAdvice: { $ne: "" },
+            });
+            const allAdviceText = allAdviceDocs.map((doc) => doc.healthAdvice).join("\n\n");
+
             await Chat.create({
               createdBy: req.user._id,
               messages: [
                 {
+                  role: "system",
+                  text: `Here are previous health suggestions for this user:\n${allAdviceText}`,
+                },
+                {
                   role: "bot",
-                  text: `Here are suggestions based on your uploaded prescription (${prescription.filename}):\n\n${healthAdvice}`
-                }
-              ]
+                  text: `Here are suggestions based on your uploaded prescription (${prescription.filename}):\n\n${healthAdvice}`,
+                },
+              ],
             });
 
             res.send(`
@@ -109,7 +119,7 @@ export async function handlePdfUpload(req, res) {
               </html>
             `);
           });
-      }, 300);
+      }, 50);
     });
   } catch (err) {
     console.error("Upload fail:", err.message);

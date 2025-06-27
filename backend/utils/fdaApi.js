@@ -1,6 +1,9 @@
+import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI("AIzaSyCYVDksNi7T5I5yUlJj2HNCmSMcEPpMuKo");
+dotenv.config();
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export default async function getHealthAdvice(ocrText) {
 const prompt = `
