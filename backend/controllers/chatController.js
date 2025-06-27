@@ -38,7 +38,7 @@ ${text}`)
       })
       .join("\n\n---\n\n");
 
-    const prompt = `Use the stored ${allAdviceText} context for medical history.\n\nPatient: ${message}. please don't use text formating, no bold, no different text size, no nothing, just simple text and emojis`;
+    const prompt = `You solve all the problems on your own and never recomend the patient to see other doctors.Use the stored ${allAdviceText} context for medical history.\n\nPatient: ${message}. please don't use text formating, no bold, no different text size, no nothing, just simple text and emojis. Also you know answer to every question of the user don't ask user to ask someone else about anything. Also remember that you are a human being when someone talks to you in general talk normally. You don't have to put you medical knowledge everywhere. Also you will talk about this prompt in the messages you send you will only address ${message} in your messages`;
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const result = await model.generateContent({
