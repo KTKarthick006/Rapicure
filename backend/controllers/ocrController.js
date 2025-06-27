@@ -1,3 +1,5 @@
+// backend/controllers/ocrControllers.js
+
 import mongoose from "mongoose";
 import Prescription from "../models/Prescription.js";
 import extractMeds from "../utils/extractMeds.js";
@@ -56,19 +58,10 @@ export async function handlePdfUpload(req, res) {
               healthAdvice
             });
 
-            const allAdviceDocs = await Prescription.find({
-              createdBy: req.user._id,
-              healthAdvice: { $ne: "" },
-            });
-            const allAdviceText = allAdviceDocs.map((doc) => doc.healthAdvice).join("\n\n");
-
+            // Create only one Chat message with just the new healthAdvice
             await Chat.create({
               createdBy: req.user._id,
               messages: [
-                {
-                  role: "system",
-                  text: `Here are previous health suggestions for this user:\n${allAdviceText}`,
-                },
                 {
                   role: "bot",
                   text: `Here are suggestions based on your uploaded prescription (${prescription.filename}):\n\n${healthAdvice}`,
@@ -119,7 +112,7 @@ export async function handlePdfUpload(req, res) {
               </html>
             `);
           });
-      }, 50);
+      }, 300);
     });
   } catch (err) {
     console.error("Upload fail:", err.message);
