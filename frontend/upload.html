@@ -6,18 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Upload Prescription</title>
   <style>
+    :root {
+      --primary-color: #3aa6b9;
+      --accent-color: #75e6da;
+      --background-dark: #1e2a38;
+      --card-bg: #2b3e50;
+      --input-bg: #d4f1f4;
+      --btn-color: #52b69a;
+      --btn-hover: #277a60;
+      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: var(--font-family);
     }
 
     body {
       display: flex;
-      height: 100vh;
-      background: #b7c2ba;
+      min-height: 100vh;
+      background-color: var(--background-dark);
       color: white;
+      overflow: hidden;
     }
 
     .form-container {
@@ -25,35 +37,38 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-right: 3%;
+      background-color: var(--background-dark);
+      padding: 2rem;
     }
 
     .form-box {
-      background: #c5dad0;
+      background: var(--card-bg);
       padding: 2rem;
       border-radius: 20px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 4px 15px rgb(0, 0, 0);
-      transition: box-shadow 0.5s;
-    }
-
-    .form-box:hover {
-      box-shadow: 0 8px 30px rgb(0, 0, 0);
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
     }
 
     h2 {
       text-align: center;
       margin-bottom: 1.5rem;
-      color: #8c5717;
+      color: var(--accent-color);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
     }
 
     input[type="file"] {
-      width: 100%;
+      flex: 1;
       padding: 0.7rem;
-      margin-bottom: 1rem;
-      background: rgba(0, 0, 0, 0.2);
-      color: white;
+      background: var(--input-bg);
+      color: #000;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -61,51 +76,82 @@
 
     input[type="file"]::file-selector-button {
       padding: 0.5rem 1rem;
-      background: #4169e1;
+      background: var(--btn-color);
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      transition: 0.4s;
     }
 
     input[type="file"]::file-selector-button:hover {
-      background: #001cf4;
-      border-radius: 10px;
+      background: var(--btn-hover);
     }
 
     button {
-      width: 100%;
-      padding: 0.7rem;
-      background: #4169e1;
+      padding: 0.7rem 1.5rem;
+      background: var(--btn-color);
       border: none;
       border-radius: 8px;
       color: white;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.6s;
+      transition: background-color 0.3s ease;
     }
 
     button:hover {
-      background: #001cf4;
-      border-radius: 18px;
+      background: var(--btn-hover);
+    }
+
+    #pdf-preview {
+      margin-top: 1rem;
+      width: 100%;
+      height: 350px;
+      border: none;
+      border-radius: 10px;
+      background-color: white;
     }
 
     .footer {
       text-align: center;
-      margin-top: 1rem;
-      color: #7a5800;
+      margin-top: 1.5rem;
+    }
+
+    .footer a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
     }
 
     .wave-section {
-      flex: 0 0 45%;
+      flex: 0 0 30%;
       background-image: url("https://img.freepik.com/free-vector/clean-medical-background_53876-116873.jpg?semt=ais_items_boosted&w=740");
-      clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 80%, 15% 50%, 0% 20%, 0% 0%);
+      /* background-size: cover; */
+      background-position: - center;
+      clip-path: polygon(85% 0%, 0% 0%, 0% 100%, 100% 100%, 100% 80%, 85% 50%, 100% 20%, 100% 0%);
+      transform: scaleX(-1);
+    }
+
+    .message {
+      background-color: #28a745;
+      color: white;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+    }
+
+    .message.loading {
+      background-color: #f0ad4e;
     }
 
     @media (max-width: 768px) {
       body {
         flex-direction: column;
+        overflow: auto;
       }
 
       .wave-section {
@@ -114,7 +160,7 @@
 
       .form-container {
         width: 100%;
-        padding: 2rem;
+        padding: 2rem 1rem;
       }
     }
   </style>
@@ -124,18 +170,68 @@
   <div class="form-container">
     <div class="form-box">
       <h2>Upload Prescription PDF</h2>
-      <form action="/user/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="pdf" accept="application/pdf" required />
-        <button type="submit">Upload</button>
+      <form id="upload-form" action="/user/upload" method="POST" enctype="multipart/form-data">
+        <div class="form-row">
+          <input type="file" name="pdf" id="pdf-input" accept="application/pdf" required />
+          <button type="submit">Upload</button>
+        </div>
       </form>
+      <div class="message loading" id="loading-msg">⏳ Extracting information...</div>
+      <div class="message" id="success-msg">✅ Prescription uploaded successfully!</div>
+      <iframe id="pdf-preview"></iframe>
       <div class="footer">
-        <a href="/home" style="color: #00673f; text-decoration: none;">
-          ← Back to Dashboard
-        </a>
+        <a href="/home">&larr; Back to Dashboard</a>
       </div>
     </div>
   </div>
   <div class="wave-section"></div>
+
+  <script>
+    const pdfInput = document.getElementById('pdf-input');
+    const pdfPreview = document.getElementById('pdf-preview');
+    const uploadForm = document.getElementById('upload-form');
+    const loadingMsg = document.getElementById('loading-msg');
+    const successMsg = document.getElementById('success-msg');
+
+    pdfInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file && file.type === 'application/pdf') {
+        const fileURL = URL.createObjectURL(file);
+        pdfPreview.src = fileURL;
+      } else {
+        pdfPreview.removeAttribute('src');
+      }
+    });
+
+    uploadForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const formData = new FormData(uploadForm);
+
+      loadingMsg.style.display = 'block';
+      successMsg.style.display = 'none';
+
+      fetch('/user/upload', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => {
+          loadingMsg.style.display = 'none';
+          if (response.ok) {
+            successMsg.style.display = 'block';
+            setTimeout(() => {
+              window.location.href = '/home';
+            }, 2000);
+          } else {
+            alert('❌ Upload failed. Please try again.');
+          }
+        })
+        .catch(error => {
+          loadingMsg.style.display = 'none';
+          console.error('Error:', error);
+          alert('❌ An error occurred while uploading.');
+        });
+    });
+  </script>
 </body>
 
 </html>

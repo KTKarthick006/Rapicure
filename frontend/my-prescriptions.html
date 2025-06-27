@@ -4,21 +4,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Prescriptions</title>
+  <title>My Prescriptions - Rapicure AI</title>
   <style>
+    :root {
+      --primary-color: #3aa6b9;
+      --accent-color: #75e6da;
+      --background-dark: #1e2a38;
+      --card-bg: #2b3e50;
+      --btn-color: #52b69a;
+      --btn-hover: #277a60;
+      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: var(--font-family);
     }
 
     body {
       display: flex;
       height: 100vh;
-      background: #b7c2ba;
+      background: var(--background-dark);
       color: white;
       flex-direction: row;
+      overflow: hidden;
     }
 
     .content-container {
@@ -31,35 +42,69 @@
     }
 
     h2 {
-      color: #8c5717;
+      color: var(--accent-color);
       margin-bottom: 1.5rem;
       text-align: center;
     }
 
-    h4 {
-      margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: #1e2d2f;
-      font-weight: 600;
-      text-align: center;
+    .prescription-btn {
+      background: var(--btn-color);
+      color: white;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      margin: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
     }
 
-    iframe {
-      display: block;
-      margin: 0 auto 2rem auto;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgb(0, 0, 0);
-      transition: box-shadow 0.3s ease;
+    .prescription-btn:hover {
+      background: var(--btn-hover);
     }
 
-    iframe:hover {
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal iframe {
+      width: 70vw;
+      height: 80vh;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      background: crimson;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
     }
 
     .wave-section {
-      flex: 0 0 45%;
+      flex: 0 0 30%;
       background-image: url("https://img.freepik.com/free-vector/clean-medical-background_53876-116873.jpg?semt=ais_items_boosted&w=740");
-      clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 80%, 15% 50%, 0% 20%, 0% 0%);
+      /* background-size: cover; */
+      background-position: - center;
+      clip-path: polygon(85% 0%, 0% 0%, 0% 100%, 100% 100%, 100% 80%, 85% 50%, 100% 20%, 100% 0%);
+      transform: scaleX(-1);
     }
 
     @media (max-width: 768px) {
@@ -71,27 +116,21 @@
         display: none;
       }
 
-      .content-container {
-        width: 100%;
-        padding: 1rem;
-      }
-
-      iframe {
-        width: 100% !important;
-        height: 300px !important;
+      .modal iframe {
+        width: 90vw;
+        height: 70vh;
       }
     }
 
     a.back-btn {
       margin-top: 2rem;
-      color: #00673f;
+      color: var(--accent-color);
       text-decoration: none;
       font-weight: bold;
-      transition: color 0.3s ease;
     }
 
     a.back-btn:hover {
-      color: #004c2c;
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -100,10 +139,14 @@
   <div class="content-container">
     <h2>Your Uploaded Prescriptions</h2>
     <div id="prescription-list"></div>
-    <a href="/home" class="back-btn">← Back to Dashboard</a>
+    <a href="/home" class="back-btn">&larr; Back to Dashboard</a>
   </div>
-
   <div class="wave-section"></div>
+
+  <div id="modal" class="modal" style="display: none;">
+    <button class="close-btn" onclick="closeModal()">Close</button>
+    <iframe id="modal-frame" src=""></iframe>
+  </div>
 
   <script>
     async function loadPrescriptions() {
@@ -116,26 +159,31 @@
         if (prescriptions.length === 0) {
           const noData = document.createElement("p");
           noData.innerText = "No prescriptions uploaded yet.";
-          noData.style.color = "#2c2c2c";
+          noData.style.color = "#ccc";
           noData.style.marginTop = "2rem";
           list.appendChild(noData);
         } else {
           prescriptions.forEach(p => {
-            const title = document.createElement("h4");
-            title.innerText = `${p.filename}`;
-
-            const iframe = document.createElement("iframe");
-            iframe.src = `/user/view/${p.filename}`;
-            iframe.width = "600";
-            iframe.height = "400";
-
-            list.appendChild(title);
-            list.appendChild(iframe);
+            const btn = document.createElement("button");
+            btn.className = "prescription-btn";
+            btn.innerText = p.filename;
+            btn.onclick = () => openModal(`/user/view/${p.filename}`);
+            list.appendChild(btn);
           });
         }
       } catch (err) {
         console.error("Error loading prescriptions:", err);
       }
+    }
+
+    function openModal(src) {
+      document.getElementById("modal-frame").src = src;
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("modal-frame").src = "";
+      document.getElementById("modal").style.display = "none";
     }
 
     loadPrescriptions();
