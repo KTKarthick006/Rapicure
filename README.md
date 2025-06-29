@@ -19,6 +19,7 @@ A brief guide to set up, initialize, and run the Rapicure project.
 
 2. **Install dependencies:**
    ```bash
+   cd backend
    npm install
    ```
 
@@ -34,8 +35,7 @@ cp .env.example .env
 Start the development server:
 
 ```bash
-cd backend
 npm run dev
 ```
 
-The application should now be running at [http://localhost:3000/login](http://localhost:3000) (or the port specified in your configuration).
+The application should now be running at [http://localhost:3000](http://localhost:3000) (or the port specified in your configuration).
